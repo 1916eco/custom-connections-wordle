@@ -11,14 +11,14 @@ datasource db {
 }
 
 model GameWords {
-    id    String  @id @default(uuid())
-    words Words[]
+    id    String @id @default(uuid())
+    words Word[]
 }
 
-model Words {
-    id          String     @id @default(uuid())
-    word        String
-    difficulty  String
+model Word {
+    id          String     @id @default(cuid())
+    wordString  String
+    difficulty  Int
     GameWords   GameWords? @relation(fields: [gameWordsId], references: [id])
     gameWordsId String?
 }
