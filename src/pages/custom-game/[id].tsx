@@ -81,7 +81,7 @@ export default function Home() {
 
   useEffect(() => {
     //if the mistakes are 0, alert the user and redirect them to the homepage
-    if (mistakes === 0) {
+    if (mistakes === 0 && data) {
       // put all words from the data to solved and sort it by the difficulty
       setGameOver(true);
 
