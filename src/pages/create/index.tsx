@@ -203,7 +203,7 @@ function Index() {
             <div className="col-span-5 flex items-center justify-center">
               <button className="  rounded-full bg-gray-900 p-2 px-4 text-white ">
                 <p className="text-xl" onClick={() => void handleCreateGame()}>
-                  Submit
+                  Create and Share
                 </p>
               </button>
             </div>

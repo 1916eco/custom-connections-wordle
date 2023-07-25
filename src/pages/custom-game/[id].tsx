@@ -3,16 +3,17 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { use, useEffect, useState } from "react";
 import { api } from "~/utils/api";
+import { useShuffle } from "~/utils/useShuffle";
+
+//create an interface thatis gamewords extended by Word
+interface GameWordsExtended extends GameWords, Word {}
 
 export default function Home() {
+  const [mistakes, setMistakes] = useState<number>(4);
   const [selected, setSelected] = useState<string[]>([]);
-  const [solved, setSolved] = useState<string[]>([]);
-  // create useState for the data from the query
-  // the type should be gamewords extended by words
+  const [solved, setSolved] = useState<Word[]>([]);
 
   const [data, setData] = useState<Word[]>();
-
-  const [mistakes, setMistakes] = useState<number>(4);
 
   const router = useRouter();
 
@@ -24,7 +25,12 @@ export default function Home() {
   });
 
   useEffect(() => {
-    if (trpcData) setData(trpcData);
+    //check if trpcData has data and the data does not have a length of 0
+
+    if (trpcData && !data) {
+      const shuffledArray = trpcData?.words.sort((a, b) => 0.5 - Math.random());
+      setData(shuffledArray);
+    }
   }, [trpcData]);
 
   const handleSelection = (word: string) => {
@@ -42,15 +48,17 @@ export default function Home() {
       //check all the words have the same difficulty
       selected.every(
         (word) =>
-          data?.wordString.find((item) => item.wordString === word)
-            ?.difficulty ===
-          data?.wordString.find((item) => item.wordString === selected[0])
-            ?.difficulty
+          data?.find((item) => item.wordString === word)?.difficulty ===
+          data?.find((item) => item.wordString === selected[0])?.difficulty
       )
     ) {
-      setSolved([...solved, ...selected]);
+      setSolved([
+        ...solved,
+        ...data?.filter((word) => selected.includes(word.wordString)),
+      ]);
 
       // need to remove the selected words from the array data
+      setData(data?.filter((word) => !selected.includes(word.wordString)));
 
       setSelected([]);
 
@@ -61,6 +69,11 @@ export default function Home() {
       setMistakes(mistakes - 1);
       setSelected([]);
     }
+  };
+
+  const handleShuffle = () => {
+    //shuffle the array
+    setData(data?.sort((a, b) => 0.5 - Math.random()));
   };
 
   return (
@@ -86,21 +99,22 @@ export default function Home() {
                 <div
                   key={i}
                   //if the difficulty is 1 make it yellow 2 is orange 3 is red 4 is purple
-                  className={`col-span-1  rounded-lg ${
-                    data?.words.find((item) => item.wordString === word)
-                      ?.difficulty === 1
+                  className={`col-span-1  rounded-lg 
+                  ${
+                    word.difficulty === 1
                       ? "bg-yellow-300"
-                      : data?.words.find((item) => item.wordString === word)
-                          ?.difficulty === 2
-                      ? "bg-green-400"
-                      : data?.words.find((item) => item.wordString === word)
-                          ?.difficulty === 3
+                      : word.difficulty === 2
+                      ? "bg-green-500"
+                      : word.difficulty === 3
                       ? "bg-blue-500"
-                      : "bg-purple-400"
-                  } p-4 shadow-lg`}
+                      : "bg-purple-600"
+                  }                
+                  p-4 shadow-lg`}
                 >
                   <div className="flex flex-col items-center justify-center p-4 px-6 ">
-                    <p className="text-xl font-bold uppercase">{word}</p>
+                    <p className="text-xl font-bold uppercase">
+                      {word.wordString}
+                    </p>
                   </div>
                 </div>
               ))
@@ -109,7 +123,7 @@ export default function Home() {
             {/* unsolved */}
             {
               // loop over words
-              data?.words.map((word, i) => (
+              data?.map((word, i) => (
                 //add the card id to the selected array
                 <div
                   key={i}
@@ -148,7 +162,10 @@ export default function Home() {
             <div className="col-span-4 flex w-full flex-col items-center justify-center p-4 px-6">
               {/* 3 rounded buttons with border and white background  */}
               <div className="flex flex-row items-center justify-center gap-2">
-                <button className="rounded-full border-2 border-gray-500 bg-white p-2 px-4">
+                <button
+                  className="rounded-full border-2 border-gray-500 bg-white p-2 px-4"
+                  onClick={() => void handleShuffle()}
+                >
                   <p className="text-xl">Shuffle</p>
                 </button>
                 <button
