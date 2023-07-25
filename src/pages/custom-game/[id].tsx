@@ -52,11 +52,12 @@ export default function Home() {
         (word) =>
           data?.find((item) => item.wordString === word)?.difficulty ===
           data?.find((item) => item.wordString === selected[0])?.difficulty
-      )
+      ) &&
+      data
     ) {
       setSolved([
         ...solved,
-        ...data?.filter((word) => selected.includes(word.wordString)),
+        ...data.filter((word) => selected.includes(word.wordString)),
       ]);
 
       // need to remove the selected words from the array data
