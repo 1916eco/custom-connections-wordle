@@ -2,16 +2,18 @@ import { GameWords, Word } from "@prisma/client";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { use, useEffect, useState } from "react";
+import { set } from "zod";
 import { api } from "~/utils/api";
 import { useShuffle } from "~/utils/useShuffle";
-
+import { motion, Reorder } from "framer-motion";
 //create an interface thatis gamewords extended by Word
 interface GameWordsExtended extends GameWords, Word {}
 
 export default function Home() {
-  const [mistakes, setMistakes] = useState<number>(4);
+  const [mistakes, setMistakes] = useState<number>(2);
   const [selected, setSelected] = useState<string[]>([]);
   const [solved, setSolved] = useState<Word[]>([]);
+  const [gameOver, setGameOver] = useState<boolean>(false);
 
   const [data, setData] = useState<Word[]>();
 
@@ -27,7 +29,7 @@ export default function Home() {
   useEffect(() => {
     //check if trpcData has data and the data does not have a length of 0
 
-    if (trpcData && !data) {
+    if (trpcData && !data && gameOver === false) {
       const shuffledArray = trpcData?.words.sort((a, b) => 0.5 - Math.random());
       setData(shuffledArray);
     }
@@ -76,6 +78,22 @@ export default function Home() {
     setData(data?.sort((a, b) => 0.5 - Math.random()));
   };
 
+  useEffect(() => {
+    //if the mistakes are 0, alert the user and redirect them to the homepage
+    if (mistakes === 0) {
+      // put all words from the data to solved and sort it by the difficulty
+      setGameOver(true);
+
+      setSolved([
+        ...solved,
+        ...data?.sort((a, b) => a.difficulty - b.difficulty),
+      ]);
+      setData([]);
+
+      alert("You lost");
+    }
+  }, [mistakes]);
+
   return (
     <>
       <Head>
@@ -90,7 +108,7 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-6xl font-bold">Custom Connections Game</h1>
           {/* 4 by 4 grid in the middle of the screen */}
-          <div className="mt-3 grid grid-cols-4 gap-4">
+          <motion.div className="mt-3 grid grid-cols-4 gap-4">
             {/* solved */}
             {
               // loop over words
@@ -100,15 +118,15 @@ export default function Home() {
                   key={i}
                   //if the difficulty is 1 make it yellow 2 is orange 3 is red 4 is purple
                   className={`col-span-1  rounded-lg 
-                  ${
-                    word.difficulty === 1
-                      ? "bg-yellow-300"
-                      : word.difficulty === 2
-                      ? "bg-green-500"
-                      : word.difficulty === 3
-                      ? "bg-blue-500"
-                      : "bg-purple-600"
-                  }                
+                    ${
+                      word.difficulty === 1
+                        ? "bg-yellow-300"
+                        : word.difficulty === 2
+                        ? "bg-green-500"
+                        : word.difficulty === 3
+                        ? "bg-blue-500"
+                        : "bg-purple-600"
+                    }                
                   p-4 shadow-lg`}
                 >
                   <div className="flex flex-col items-center justify-center p-4 px-6 ">
@@ -191,7 +209,7 @@ export default function Home() {
                 )}
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
         {/* italicised by me */}
         <p className="italic text-gray-500">by Enrico Simon</p>
