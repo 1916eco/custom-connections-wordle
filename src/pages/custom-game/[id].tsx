@@ -107,6 +107,13 @@ export default function Home() {
       alert("You lost");
     }
   }, [mistakes]);
+  //SOLVED CHECKER
+  useEffect(() => {
+    //if the solved array is the lengh of 4 and data is empty alert the user and redirect them to the homepage
+    if (solved?.length === 4 && data?.length === 0) {
+      alert("You won");
+    }
+  }, [solved]);
 
   function getDifficultyTitle(difficulty: number) {
     if (difficulty === 1) {
@@ -135,7 +142,7 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-6xl font-bold">Custom Connections Game</h1>
           {/* 4 by 4 grid in the middle of the screen */}
-          <motion.div className="mt-3 grid grid-cols-4 gap-4">
+          <motion.div className="mt-3 grid w-full grid-cols-4 gap-4">
             {/* solved */}
 
             {
@@ -144,7 +151,7 @@ export default function Home() {
                 <div
                   key={i}
                   //if the difficulty is 1 make it yellow 2 is orange 3 is red 4 is purple
-                  className={`col-span-4  rounded-lg 
+                  className={`col-span-4 rounded-lg
                     ${
                       word.difficulty === 1
                         ? "bg-yellow-300"
@@ -164,7 +171,6 @@ export default function Home() {
                         {word.word.map((item, i) => (
                           <span key={i} className="">
                             {item}
-                            {/* for the first 3 add a comma */}
                             {i < word.word.length - 1 && ","}
                           </span>
                         ))}
