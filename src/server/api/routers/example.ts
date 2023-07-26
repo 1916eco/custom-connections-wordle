@@ -25,22 +25,36 @@ export const exampleRouter = createTRPCRouter({
             difficulty: z.number(),
           })
         ),
+        titles: z.object({
+          easyTitle: z.string(),
+          mediumTitle: z.string(),
+          hardTitle: z.string(),
+          trickyTitle: z.string(),
+        }),
       })
     )
     .mutation(({ ctx, input }) => {
-      const game = ctx.prisma.gameWords.create({
+      // Create the Titles first
+
+      // Then, create the GameWords and associate them with the Titles
+      return ctx.prisma.gameWords.create({
         data: {
+          easyTitle: input.titles.easyTitle,
+          mediumTitle: input.titles.mediumTitle,
+          hardTitle: input.titles.hardTitle,
+          trickyTitle: input.titles.trickyTitle,
           words: {
-            // loop over the wordsarray and create a word for each one
-            create: input.wordsArray.map((word) => ({
-              wordString: word.wordsString,
-              difficulty: word.difficulty,
-            })),
+            create: input.wordsArray.map((word) => {
+              return {
+                wordString: word.wordsString,
+                difficulty: word.difficulty,
+              };
+            }),
           },
         },
       });
-      return game;
     }),
+
   getGameById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {

@@ -111,14 +111,15 @@ export default function Home() {
           {/* 4 by 4 grid in the middle of the screen */}
           <motion.div className="mt-3 grid grid-cols-4 gap-4">
             {/* solved */}
+
             {
               // loop over words
               solved?.map((word, i) => (
-                //add the card id to the selected array
-                <div
-                  key={i}
-                  //if the difficulty is 1 make it yellow 2 is orange 3 is red 4 is purple
-                  className={`col-span-1  rounded-lg 
+                <>
+                  <div
+                    key={i}
+                    //if the difficulty is 1 make it yellow 2 is orange 3 is red 4 is purple
+                    className={`col-span-1  rounded-lg 
                     ${
                       word.difficulty === 1
                         ? "bg-yellow-300"
@@ -129,13 +130,14 @@ export default function Home() {
                         : "bg-purple-600"
                     }                
                   p-4 shadow-lg`}
-                >
-                  <div className="flex flex-col items-center justify-center p-4 px-6 ">
-                    <p className="text-xl font-bold uppercase">
-                      {word.wordString}
-                    </p>
+                  >
+                    <div className="flex flex-col items-center justify-center p-4 px-6 ">
+                      <p className="text-xl font-bold uppercase">
+                        {word.wordString}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                </>
               ))
             }
 

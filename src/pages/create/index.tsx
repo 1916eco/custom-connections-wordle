@@ -3,12 +3,26 @@ import Head from "next/head";
 import React, { useState } from "react";
 import { api } from "~/utils/api";
 
+interface Ititles {
+  easyTitle: string;
+  mediumTitle: string;
+  hardTitle: string;
+  trickyTitle: string;
+}
+
 function Index() {
   const wordsTRPC = api.example.createGame.useMutation();
   const [easy, setEasy] = useState<string[]>([]);
   const [medium, setMedium] = useState<string[]>([]);
   const [hard, setHard] = useState<string[]>([]);
   const [tricky, setTricky] = useState<string[]>([]);
+  // const [trpcResults, setTrpcResults] = useState<any>();
+  const [titles, setTitles] = useState<Ititles>({
+    easyTitle: "",
+    mediumTitle: "",
+    hardTitle: "",
+    trickyTitle: "",
+  });
 
   console.log(easy, medium, hard, tricky);
 
@@ -17,7 +31,11 @@ function Index() {
       easy.length == 4 &&
       medium.length == 4 &&
       hard.length == 4 &&
-      tricky.length == 4
+      tricky.length == 4 &&
+      titles.easyTitle !== "" &&
+      titles.mediumTitle !== "" &&
+      titles.hardTitle !== "" &&
+      titles.trickyTitle !== ""
     ) {
       const result = await wordsTRPC.mutateAsync({
         wordsArray: [
@@ -42,12 +60,15 @@ function Index() {
             difficulty: 4,
           })),
         ],
+        titles: titles,
       });
       console.log(result);
+      // setTrpcResults(result);
     } else {
-      console.log("Please add more words");
+      console.log("Please add more words or add title");
     }
   };
+  console.log(titles);
 
   return (
     <>
@@ -68,6 +89,13 @@ function Index() {
             >
               <div className="flex flex-col items-center justify-center p-4 px-6 ">
                 <p className="text-xl font-bold uppercase ">Easy</p>
+                <input
+                  className="bg-transparent p-1 text-center text-base font-bold uppercase"
+                  placeholder="Input Title"
+                  onChange={(e) =>
+                    setTitles({ ...titles, easyTitle: e.target.value })
+                  }
+                />
               </div>
             </div>
             {
@@ -103,6 +131,13 @@ function Index() {
             >
               <div className="flex flex-col items-center justify-center p-4 px-6 ">
                 <p className="text-xl font-bold uppercase">Medium</p>
+                <input
+                  className="bg-transparent p-1 text-center text-base font-bold uppercase"
+                  placeholder="Input Title"
+                  onChange={(e) =>
+                    setTitles({ ...titles, mediumTitle: e.target.value })
+                  }
+                />
               </div>
             </div>
             {
@@ -138,6 +173,13 @@ function Index() {
             >
               <div className="flex flex-col items-center justify-center p-4 px-6 ">
                 <p className="text-xl font-bold uppercase">Hard</p>
+                <input
+                  className="bg-transparent p-1 text-center text-base font-bold uppercase"
+                  placeholder="Input Title"
+                  onChange={(e) =>
+                    setTitles({ ...titles, hardTitle: e.target.value })
+                  }
+                />
               </div>
             </div>
             {
@@ -172,6 +214,13 @@ function Index() {
             >
               <div className="flex flex-col items-center justify-center p-4 px-6 ">
                 <p className="text-xl font-bold uppercase">Tricky</p>
+                <input
+                  className="bg-transparent p-1 text-center text-base font-bold uppercase"
+                  placeholder="Input Title"
+                  onChange={(e) =>
+                    setTitles({ ...titles, trickyTitle: e.target.value })
+                  }
+                />
               </div>
             </div>
             {
