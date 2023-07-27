@@ -1,41 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
-import { api } from "~/utils/api";
 
 export default function Home() {
-  const [selected, setSelected] = useState<string[]>([]);
-  const [mistakes, setMistakes] = useState<number>(3);
-
-  const words = [
-    "canary",
-    "Irate",
-    "lost",
-    "school bus",
-    "beach",
-    "gull",
-    "furious",
-    "booby",
-    "banana",
-    "beastie",
-    "sunflower",
-    "livid",
-    "hardy",
-    "pelican",
-    "incensed",
-    "puffin",
-  ];
-
-  const handleSelection = (word: string) => {
-    // if the word is already selected, remove it from the array and max selected words is 4
-    if (selected.includes(word)) {
-      setSelected(selected.filter((item) => item !== word));
-    } else if (selected.length < 4) {
-      // if the word is not selected, add it to the array
-      setSelected([...selected, word]);
-    }
-  };
-
   return (
     <>
       <Head>
