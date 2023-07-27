@@ -1,4 +1,4 @@
-import { GameWords } from "@prisma/client";
+import type { GameWords } from "@prisma/client";
 import { FunctionComponent } from "react";
 
 interface ModalProps {
@@ -13,7 +13,7 @@ const Modal: FunctionComponent<ModalProps> = ({ game, setOpenModal }) => {
     );
   };
 
-  return (
+  return game ? (
     <div className="fixed inset-0 z-10 overflow-y-auto">
       <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
@@ -65,7 +65,7 @@ const Modal: FunctionComponent<ModalProps> = ({ game, setOpenModal }) => {
                   {/* copy to clipboard  */}
                   <button
                     className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-                    onClick={() => handleCopyToClipboard}
+                    onClick={() => void handleCopyToClipboard()}
                   >
                     Copy to clipboard
                   </button>
@@ -76,7 +76,7 @@ const Modal: FunctionComponent<ModalProps> = ({ game, setOpenModal }) => {
         </div>
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export default Modal;
