@@ -1,7 +1,9 @@
-import { Word } from "@prisma/client";
+import { GameWords, Word } from "@prisma/client";
 import Head from "next/head";
 import React, { useState } from "react";
 import { api } from "~/utils/api";
+import Modal from "./component/Modal";
+import { notifyToasterError } from "~/utils/toaster";
 
 interface Ititles {
   easyTitle: string;
@@ -12,6 +14,9 @@ interface Ititles {
 
 function Index() {
   const wordsTRPC = api.example.createGame.useMutation();
+  const [createdGame, setCreatedGame] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [results, setResults] = useState<GameWords>();
   const [easy, setEasy] = useState<string[]>([]);
   const [medium, setMedium] = useState<string[]>([]);
   const [hard, setHard] = useState<string[]>([]);
@@ -24,9 +29,14 @@ function Index() {
     trickyTitle: "",
   });
 
-  console.log(easy, medium, hard, tricky);
-
   const handleCreateGame = async () => {
+    //if createdGame is true, return
+    if (createdGame) {
+      notifyToasterError("Game already created");
+      setOpenModal(true);
+      return;
+    }
+
     if (
       easy.length == 4 &&
       medium.length == 4 &&
@@ -37,7 +47,7 @@ function Index() {
       titles.hardTitle !== "" &&
       titles.trickyTitle !== ""
     ) {
-      const result = await wordsTRPC.mutateAsync({
+      const resultTRPC = await wordsTRPC.mutateAsync({
         wordsArray: [
           //add all easy words to the array with 1 as the difficulty
           ...easy.map((word) => ({
@@ -62,13 +72,18 @@ function Index() {
         ],
         titles: titles,
       });
-      console.log(result);
+      console.log("resultTRPC", resultTRPC);
       // setTrpcResults(result);
+      setResults(resultTRPC);
+      setCreatedGame(true);
+      setOpenModal(true);
     } else {
       console.log("Please add more words or add title");
     }
   };
+
   console.log(titles);
+  console.log("results", results);
 
   return (
     <>
@@ -78,6 +93,9 @@ function Index() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-white">
+        {results && openModal && createdGame ? (
+          <Modal game={results} setOpenModal={setOpenModal} />
+        ) : null}
         {/* div to center and put title on top of the page */}
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-6xl font-bold">Create Custom Connections Game</h1>
@@ -252,7 +270,7 @@ function Index() {
             <div className="col-span-5 flex items-center justify-center">
               <button className="  rounded-full bg-gray-900 p-2 px-4 text-white ">
                 <p className="text-xl" onClick={() => void handleCreateGame()}>
-                  Create and Share
+                  {!createdGame ? "Create and Share" : "Share Game"}
                 </p>
               </button>
             </div>

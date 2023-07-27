@@ -17,7 +17,7 @@ interface ISolved {
 }
 
 export default function Home() {
-  const [mistakes, setMistakes] = useState<number>(2);
+  const [mistakes, setMistakes] = useState<number>(4);
   const [previousGuesses, setPreviousGuesses] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [solved, setSolved] = useState<ISolved[]>();
@@ -284,8 +284,19 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
-        {/* italicised by me */}
-        <p className="italic text-gray-500">by Enrico Simon</p>
+        <p className="mt-5 italic text-gray-500">by Enrico Simon</p>
+
+        <p className="text-xs text-gray-500">
+          If you would like to contibute to this project, please visit
+          <a
+            className="text-blue-500"
+            // new tab
+            target="_blank"
+            href="https://github.com/1916eco/custom-connections-wordle"
+          >
+            {" github "}
+          </a>
+        </p>
       </main>
     </>
   );

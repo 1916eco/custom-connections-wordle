@@ -59,6 +59,12 @@ export default function Home() {
 
           {/* by me */}
           <p className="mt-5 italic text-gray-500">by Enrico Simon</p>
+          <p className="text-xs text-gray-500">
+            If you would like to contibute to this project, please visit
+            <a href="https://github.com/1916eco/custom-connections-wordle">
+              github
+            </a>
+          </p>
         </div>
       </main>
     </>
