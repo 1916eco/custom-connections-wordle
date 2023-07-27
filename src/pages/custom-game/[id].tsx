@@ -12,15 +12,15 @@ import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 interface ISolved {
   word: string[];
-  difficulty: number;
-  title: string;
+  difficulty: number | undefined;
+  title: string | undefined;
 }
 
 export default function Home() {
   const [mistakes, setMistakes] = useState<number>(4);
   const [previousGuesses, setPreviousGuesses] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
-  const [solved, setSolved] = useState<ISolved[]>();
+  const [solved, setSolved] = useState<ISolved[]>([]);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [gameWon, setGameWon] = useState<boolean>(false);
 
@@ -76,11 +76,13 @@ export default function Home() {
       //set solved to the solved array
       setSolved((prevSolved: ISolved[]) => {
         const newSolvedItem = {
-          word: selected,
-          difficulty: data?.find((item) => item.wordString === selected[0])
-            ?.difficulty,
+          word: selected ?? [],
+          difficulty:
+            data?.find((item) => item.wordString === selected[0])?.difficulty ??
+            0,
           title: getDifficultyTitle(
-            data?.find((item) => item.wordString === selected[0])?.difficulty
+            data?.find((item) => item.wordString === selected[0])?.difficulty ??
+              0
           ),
         };
 
@@ -118,10 +120,20 @@ export default function Home() {
       // put all words from the data to solved and sort it by the difficulty
       setGameOver(true);
 
-      setSolved([
-        ...solved,
-        ...data?.sort((a, b) => a.difficulty - b.difficulty),
-      ]);
+      //sort data by difficulty and spread it as an ISolved array then set it to solved with previous solved
+      setSolved((prevSolved: ISolved[]) => {
+        const newSolvedItem = {
+          word: selected,
+          difficulty: data?.find((item) => item.wordString === selected[0])
+            ?.difficulty,
+          title: getDifficultyTitle(
+            data?.find((item) => item.wordString === selected[0])?.difficulty ??
+              0
+          ),
+        };
+
+        return prevSolved ? [...prevSolved, newSolvedItem] : [newSolvedItem];
+      });
       setData([]);
 
       notifyToasterError("You lost");
@@ -130,12 +142,12 @@ export default function Home() {
   //SOLVED CHECKER
   useEffect(() => {
     //check each object in the array and order it by the difficulty
-    solved?.sort((a, b) => a.difficulty - b.difficulty);
+    solved?.sort((a, b) => a.difficulty! - b.difficulty!);
 
-    //if the solved array is the lengh of 4 and data is empty *- the user and redirect them to the homepage
+    //if the solved array is the lengh of 4 and data is empty
     if (solved?.length === 4 && data?.length === 0) {
       setGameOver(true);
-      //setGamewon to true for 10 seconds
+      //setGamewon to true for 10 seconds so confetti doesnt go forever
       setGameWon(true);
       setTimeout(() => {
         setGameWon(false);
@@ -181,7 +193,7 @@ export default function Home() {
                 <div
                   key={i}
                   //if the difficulty is 1 make it yellow 2 is orange 3 is red 4 is purple
-                  className={`col-span-4 rounded-lg
+                  className={`col-span-4 w-full rounded-lg
                     ${
                       word.difficulty === 1
                         ? "bg-yellow-300"
@@ -219,7 +231,7 @@ export default function Home() {
                 <motion.div
                   key={i}
                   //if the card id is in the selected array, add the selected class
-                  className={`rounded-lg  p-4 shadow-lg ${
+                  className={`w-full  rounded-lg p-4 shadow-lg ${
                     selected.includes(word.wordString)
                       ? "bg-blue-200"
                       : "bg-gray-100"
@@ -237,18 +249,20 @@ export default function Home() {
 
             {/* 4 small circles counting mistakes  */}
             <div className="col-span-4 flex w-full flex-col items-center justify-center p-4 px-6">
-              <div className="flex flex-row items-center justify-center gap-2">
-                <p className="text-xl">Mistakes remaining:</p>
-                {/* loop 4 times 4 circles grey for no mistakes red for mistakes */}
-                {Array.from(Array(4).keys()).map((i) => (
-                  <div
-                    key={i}
-                    className={`h-4 w-4 rounded-full ${
-                      mistakes > i ? "bg-gray-500" : "bg-red-500"
-                    }`}
-                  ></div>
-                ))}
-              </div>
+              {!gameOver ? (
+                <div className="flex flex-row items-center justify-center gap-2">
+                  <p className="text-xl">Mistakes remaining:</p>
+                  {/* loop 4 times 4 circles grey for no mistakes red for mistakes */}
+                  {Array.from(Array(4).keys()).map((i) => (
+                    <div
+                      key={i}
+                      className={`h-4 w-4 rounded-full ${
+                        mistakes > i ? "bg-gray-500" : "bg-red-500"
+                      }`}
+                    ></div>
+                  ))}
+                </div>
+              ) : null}
             </div>
             <div className="col-span-4 flex w-full flex-col items-center justify-center p-4 px-6">
               {/* 3 rounded buttons with border and white background  */}
