@@ -1,4 +1,4 @@
-import { GameWords, Word } from "@prisma/client";
+import { GameWords } from "@prisma/client";
 import Head from "next/head";
 import React, { useState } from "react";
 import { api } from "~/utils/api";
@@ -72,18 +72,16 @@ function Index() {
         ],
         titles: titles,
       });
-      console.log("resultTRPC", resultTRPC);
+      // console.log("resultTRPC", resultTRPC);
       // setTrpcResults(result);
       setResults(resultTRPC);
       setCreatedGame(true);
       setOpenModal(true);
     } else {
-      console.log("Please add more words or add title");
+      // console.log("Please add more words or add title");
+      notifyToasterError("Please add more words or add title");
     }
   };
-
-  console.log(titles);
-  console.log("results", results);
 
   return (
     <>
