@@ -1,13 +1,11 @@
-import { GameWords, Word } from "@prisma/client";
+import type { Word } from "@prisma/client";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { use, useEffect, useState } from "react";
-import { set } from "zod";
+import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
-import { motion, Reorder } from "framer-motion";
+import { motion } from "framer-motion";
 import { notifyToasterError, notifyToasterSuccess } from "~/utils/toaster";
 //create an interface thatis gamewords extended by Word
-interface GameWordsExtended extends GameWords, Word {}
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 interface ISolved {
