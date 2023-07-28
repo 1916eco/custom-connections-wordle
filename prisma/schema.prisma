@@ -28,3 +28,8 @@ model Word {
     GameWords   GameWords? @relation(fields: [gameWordsId], references: [id])
     gameWordsId String?
 }
+
+model CreateWordPassword {
+    id       String @id @default(cuid())
+    password String @unique
+}

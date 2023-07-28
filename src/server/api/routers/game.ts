@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -25,6 +26,7 @@ export const gameRouter = createTRPCRouter({
             difficulty: z.number(),
           })
         ),
+        password: z.string(),
         titles: z.object({
           easyTitle: z.string(),
           mediumTitle: z.string(),
@@ -33,11 +35,32 @@ export const gameRouter = createTRPCRouter({
         }),
       })
     )
-    .mutation(({ ctx, input }) => {
-      // Create the Titles first
+    .mutation(async ({ ctx, input }) => {
+      const passwordDb = await ctx.prisma.createWordPassword
+        .findUnique({
+          where: {
+            password: input.password,
+          },
+        })
+        .then((res) => {
+          console.log("res", res);
+          if (res === null) {
+            //throw error
+            throw new TRPCError({
+              code: "UNAUTHORIZED",
+              message: "Wrong Password",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Wrong Password",
+          });
+        });
 
-      // Then, create the GameWords and associate them with the Titles
-      return ctx.prisma.gameWords.create({
+      return await ctx.prisma.gameWords.create({
         data: {
           easyTitle: input.titles.easyTitle,
           mediumTitle: input.titles.mediumTitle,
@@ -68,9 +91,7 @@ export const gameRouter = createTRPCRouter({
       });
     }),
   getRandomGame: publicProcedure.input(z.object({})).query(({ ctx, input }) => {
-    //get a random game from the database most recently created and return only the id
     return ctx.prisma.gameWords.findFirst({
-      // get the one that is "hot"
       where: {
         hot: true,
       },

@@ -1,12 +1,15 @@
 import type { GameWords } from "@prisma/client";
 import { FunctionComponent } from "react";
 
-interface ModalProps {
+interface ShareModalProps {
   game: GameWords;
   setOpenModal: (openModal: boolean) => void;
 }
 
-const Modal: FunctionComponent<ModalProps> = ({ game, setOpenModal }) => {
+const ShareModal: FunctionComponent<ShareModalProps> = ({
+  game,
+  setOpenModal,
+}) => {
   const handleCopyToClipboard = async () => {
     await navigator.clipboard.writeText(
       `http://localhost:3000/custom-game/${game.id}`
@@ -58,9 +61,9 @@ const Modal: FunctionComponent<ModalProps> = ({ game, setOpenModal }) => {
                   <a
                     className="text-blue-500"
                     target="_blank"
-                    href={`http://localhost:3000/custom-game/${game.id}`}
+                    href={`${process.env.WEBSITE_URL}/custom-game/${game.id}`}
                   >
-                    {`http://localhost:3000/custom-game/${game.id}`}
+                    {`${process.env.WEBSITE_URL}/custom-game/${game.id}`}
                   </a>
                   {/* copy to clipboard  */}
                   <button
@@ -79,4 +82,4 @@ const Modal: FunctionComponent<ModalProps> = ({ game, setOpenModal }) => {
   ) : null;
 };
 
-export default Modal;
+export default ShareModal;
