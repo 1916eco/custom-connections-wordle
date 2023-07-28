@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-export const exampleRouter = createTRPCRouter({
+export const gameRouter = createTRPCRouter({
   getGame: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
@@ -67,4 +67,16 @@ export const exampleRouter = createTRPCRouter({
         },
       });
     }),
+  getRandomGame: publicProcedure.input(z.object({})).query(({ ctx, input }) => {
+    //get a random game from the database most recently created and return only the id
+    return ctx.prisma.gameWords.findFirst({
+      // get the one that is "hot"
+      where: {
+        hot: true,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }),
 });

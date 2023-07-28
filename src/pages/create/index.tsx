@@ -13,7 +13,7 @@ interface Ititles {
 }
 
 function Index() {
-  const wordsTRPC = api.example.createGame.useMutation();
+  const wordsTRPC = api.game.createGame.useMutation();
   const [createdGame, setCreatedGame] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [results, setResults] = useState<GameWords>();

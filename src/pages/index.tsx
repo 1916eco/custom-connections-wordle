@@ -1,7 +1,9 @@
 import Head from "next/head";
 import Link from "next/link";
+import { api } from "~/utils/api";
 
 export default function Home() {
+  const { data } = api.game.getRandomGame.useQuery({});
   return (
     <>
       <Head>
@@ -23,12 +25,22 @@ export default function Home() {
             <Link href="/create">Create a game</Link>
           </button>
 
+          {data ? (
+            <button className="mt-5 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+              <Link href={`/custom-game/${data.id}`}>Play Random Game</Link>
+            </button>
+          ) : null}
+
           {/* by me */}
           <p className="mt-5 italic text-gray-500">by Enrico Simon</p>
           <p className="text-xs text-gray-500">
             If you would like to contibute to this project, please visit
-            <a href="https://github.com/1916eco/custom-connections-wordle">
-              github
+            <a
+              className="text-blue-500"
+              target="_blank"
+              href="https://github.com/1916eco/custom-connections-wordle"
+            >
+              {" github "}
             </a>
           </p>
         </div>

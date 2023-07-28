@@ -11,12 +11,14 @@ datasource db {
 }
 
 model GameWords {
-    id          String @id @default(uuid())
+    id          String   @id @default(uuid())
     words       Word[]
     easyTitle   String
     mediumTitle String
     hardTitle   String
     trickyTitle String
+    createdAt   DateTime @default(now())
+    hot         Boolean  @default(false)
 }
 
 model Word {

@@ -31,7 +31,7 @@ export default function Home() {
   const id = router.query.id as string;
 
   // query trpc game by id
-  const { data: trpcData, isLoading } = api.example.getGame.useQuery({
+  const { data: trpcData, isLoading } = api.game.getGame.useQuery({
     id: id,
   });
 
@@ -302,7 +302,6 @@ export default function Home() {
           If you would like to contibute to this project, please visit
           <a
             className="text-blue-500"
-            // new tab
             target="_blank"
             href="https://github.com/1916eco/custom-connections-wordle"
           >
