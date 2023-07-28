@@ -1,3 +1,13 @@
+## If you would like to contribute to the development feel free to creat a pr
+
+I created a password for Developers to create games the password is "Github" without the quotes
+
+To start making changes, 
+1. change schema.prisma provider to "sqlite" 
+2. add DATABASE_URL="file:./db.sqlite" to ENV 
+3. run npx prisma db push
+4. run npm run dev
+
 # Create T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
