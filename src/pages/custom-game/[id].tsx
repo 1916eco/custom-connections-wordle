@@ -195,7 +195,9 @@ export default function Home() {
         {isLoading && <p>Loading...</p>}
         {/* div to center and put title on top of the page */}
         <div className="flex flex-col items-center justify-center">
-          <h1 className="text-6xl font-bold">Custom Connections Game</h1>
+          <h1 className="text-center text-3xl font-bold md:text-6xl">
+            Custom Connections Game
+          </h1>
           {/* 4 by 4 grid in the middle of the screen */}
           <motion.div className="mt-3 grid w-full grid-cols-4 gap-4">
             {/* solved */}
@@ -252,7 +254,7 @@ export default function Home() {
                   onClick={() => handleSelection(word.wordString)}
                 >
                   <div className="flex flex-col items-center justify-center p-4 px-6 ">
-                    <p className="text-xl font-bold uppercase">
+                    <p className="text-base font-bold uppercase md:text-xl">
                       {word.wordString}
                     </p>
                   </div>
