@@ -132,7 +132,11 @@ function Index() {
 
       <main className="flex min-h-screen flex-col items-center justify-center bg-white">
         {results && openModal && createdGame ? (
-          <Modal game={results} setOpenModal={setOpenModal} />
+          <Modal
+            game={results}
+            setOpenModal={setOpenModal}
+            openModal={openModal}
+          />
         ) : null}
 
         <Dialog
