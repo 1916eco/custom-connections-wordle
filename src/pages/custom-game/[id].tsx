@@ -15,7 +15,7 @@ interface ISolved {
 }
 
 export default function Home() {
-  const [mistakes, setMistakes] = useState<number>(4);
+  const [mistakes, setMistakes] = useState<number>(1);
   const [previousGuesses, setPreviousGuesses] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [solved, setSolved] = useState<ISolved[]>([]);
@@ -113,37 +113,50 @@ export default function Home() {
   };
 
   useEffect(() => {
-    //if the mistakes are 0, alert the user and redirect them to the homepage
-    if (mistakes === 0 && data) {
-      // put all words from the data to solved and sort it by the difficulty
-      setGameOver(true);
-
-      //sort data by difficulty and spread it as an ISolved array then set it to solved with previous solved
-      setSolved((prevSolved: ISolved[]) => {
-        const newSolvedItem = {
-          word: selected,
-          difficulty: data?.find((item) => item.wordString === selected[0])
-            ?.difficulty,
-          title: getDifficultyTitle(
-            data?.find((item) => item.wordString === selected[0])?.difficulty ??
-              0
-          ),
-        };
-
-        return prevSolved ? [...prevSolved, newSolvedItem] : [newSolvedItem];
-      });
+    // If the mistakes are 0 and trpcData is available
+    if (mistakes === 0 && trpcData?.words) {
+      notifyToasterError("You lost");
       setData([]);
 
-      notifyToasterError("You lost");
+      // Create an array with all the words from all four categories
+      const allWords = trpcData.words.map((word) => word.wordString);
+
+      // Set the solved state with the words from all categories and their difficulty
+      setSolved(() => {
+        const newSolvedItems: ISolved[] = [];
+
+        // Loop through all four categories
+        for (let i = 0; i < 4; i++) {
+          //get all the words with the same difficulty as i
+          const categoryWords = allWords.filter(
+            (word) =>
+              trpcData?.words.find((item) => item.wordString === word)
+                ?.difficulty ===
+              i + 1
+          );
+
+          newSolvedItems.push({
+            word: categoryWords,
+            difficulty: i + 1 ?? 0,
+            title: getDifficultyTitle(i + 1 ?? 0),
+          });
+        }
+
+        return newSolvedItems;
+      });
+
+      setGameOver(true);
+      setGameWon(false);
     }
   }, [mistakes]);
+
   //SOLVED CHECKER
   useEffect(() => {
     //check each object in the array and order it by the difficulty
     solved?.sort((a, b) => a.difficulty! - b.difficulty!);
 
     //if the solved array is the lengh of 4 and data is empty
-    if (solved?.length === 4 && data?.length === 0) {
+    if (solved?.length === 4 && data?.length === 0 && mistakes > 0) {
       setGameOver(true);
       //setGamewon to true for 10 seconds so confetti doesnt go forever
       setGameWon(true);
@@ -175,7 +188,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
-        {gameWon ? <Confetti width={width} height={height} /> : null}
+        {gameWon && mistakes !== 0 ? (
+          <Confetti width={width} height={height} />
+        ) : null}
         {/* isloading */}
         {isLoading && <p>Loading...</p>}
         {/* div to center and put title on top of the page */}
