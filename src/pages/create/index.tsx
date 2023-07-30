@@ -78,6 +78,13 @@ function Index() {
       titles.trickyTitle !== "" &&
       openPasswordModal.password !== null
     ) {
+      //do a check for all the words in easy medium hard and tricky to make sure all words are unique
+      const allWords = [...easy, ...medium, ...hard, ...tricky];
+      const uniqueWords = [...new Set(allWords)];
+      if (uniqueWords.length !== allWords.length) {
+        notifyToasterError("Please make sure all words are unique");
+        return;
+      }
       await wordsTRPC
         .mutateAsync({
           wordsArray: [

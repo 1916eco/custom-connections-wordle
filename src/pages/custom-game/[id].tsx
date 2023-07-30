@@ -115,7 +115,7 @@ export default function Home() {
   useEffect(() => {
     // If the mistakes are 0 and trpcData is available
     if (mistakes === 0 && trpcData?.words) {
-      notifyToasterError("You lost");
+      notifyToasterError("Better luck next time");
       setData([]);
 
       // Create an array with all the words from all four categories
@@ -281,35 +281,37 @@ export default function Home() {
             </div>
             <div className="col-span-4 flex w-full flex-col items-center justify-center p-4 px-6">
               {/* 3 rounded buttons with border and white background  */}
-              <div className="flex flex-row items-center justify-center gap-2">
-                <button
-                  className="rounded-full border-2 border-gray-500 bg-white p-2 px-4"
-                  onClick={() => void handleShuffle()}
-                >
-                  <p className="text-xl">Shuffle</p>
-                </button>
-                <button
-                  className="rounded-full border-2 border-gray-500 bg-white p-2 px-4"
-                  onClick={() => setSelected([])}
-                >
-                  <p className="text-xl">Deselect All</p>
-                </button>
-                {selected.length === 4 ? (
+              {!gameOver ? (
+                <div className="flex flex-row items-center justify-center gap-2">
                   <button
-                    className="rounded-full  bg-gray-900 p-2 px-4 text-white"
-                    onClick={() => void handleSubmit()}
-                  >
-                    <p className="text-xl">Submit</p>
-                  </button>
-                ) : (
-                  <button
-                    disabled
                     className="rounded-full border-2 border-gray-500 bg-white p-2 px-4"
+                    onClick={() => void handleShuffle()}
                   >
-                    <p className="text-xl">Submit</p>
+                    <p className="text-xl">Shuffle</p>
                   </button>
-                )}
-              </div>
+                  <button
+                    className="rounded-full border-2 border-gray-500 bg-white p-2 px-4"
+                    onClick={() => setSelected([])}
+                  >
+                    <p className="text-xl">Deselect All</p>
+                  </button>
+                  {selected.length === 4 ? (
+                    <button
+                      className="rounded-full  bg-gray-900 p-2 px-4 text-white"
+                      onClick={() => void handleSubmit()}
+                    >
+                      <p className="text-xl">Submit</p>
+                    </button>
+                  ) : (
+                    <button
+                      disabled
+                      className="rounded-full border-2 border-gray-500 bg-white p-2 px-4"
+                    >
+                      <p className="text-xl">Submit</p>
+                    </button>
+                  )}
+                </div>
+              ) : null}
             </div>
           </motion.div>
         </div>
