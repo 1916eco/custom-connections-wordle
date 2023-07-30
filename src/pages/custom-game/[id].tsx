@@ -105,6 +105,7 @@ export default function Home() {
       // if the selected words do not have the same difficulty, add 1 to the mistakes
       setMistakes(mistakes - 1);
       setSelected([]);
+      solved?.sort((a, b) => a.difficulty! - b.difficulty!);
     }
   };
 
@@ -205,7 +206,11 @@ export default function Home() {
             {
               // loop over words
               solved?.map((word, i) => (
-                <div
+                <motion.div
+                  //animate sliding up
+                  initial={{ y: 200 }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 1 }}
                   key={i}
                   //if the difficulty is 1 make it yellow 2 is orange 3 is red 4 is purple
                   className={`col-span-4 w-full rounded-lg
@@ -234,7 +239,7 @@ export default function Home() {
                       </div>
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))
             }
 
