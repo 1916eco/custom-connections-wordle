@@ -15,7 +15,7 @@ interface ISolved {
 }
 
 export default function Home() {
-  const [mistakes, setMistakes] = useState<number>(1);
+  const [mistakes, setMistakes] = useState<number>(4);
   const [previousGuesses, setPreviousGuesses] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [solved, setSolved] = useState<ISolved[]>([]);
