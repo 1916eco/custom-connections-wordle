@@ -55,6 +55,8 @@ export default function Home() {
   };
 
   const handleSubmit = () => {
+    solved?.sort((a, b) => a.difficulty! - b.difficulty!);
+
     //check if the selected words are in the previous guesses array
     if (previousGuesses.includes(selected.sort().join(""))) {
       notifyToasterError("Already guessed");
@@ -72,6 +74,7 @@ export default function Home() {
       data
     ) {
       //set solved to the solved array
+
       setSolved((prevSolved: ISolved[]) => {
         const newSolvedItem = {
           word: selected ?? [],
@@ -83,8 +86,11 @@ export default function Home() {
               0
           ),
         };
+        //return it sorted by difficulty
 
-        return prevSolved ? [...prevSolved, newSolvedItem] : [newSolvedItem];
+        return [...prevSolved, newSolvedItem].sort(
+          (a, b) => a.difficulty! - b.difficulty!
+        );
       });
 
       // need to remove the selected words from the array data
@@ -112,8 +118,14 @@ export default function Home() {
   const handleShuffle = () => {
     setData(data?.sort((a, b) => 0.5 - Math.random()));
   };
+  useEffect(() => {
+    //sort the solved array by difficulty
+    solved?.sort((a, b) => a.difficulty! - b.difficulty!);
+  }, [solved, mistakes, selected, gameOver, gameWon]);
 
   useEffect(() => {
+    solved?.sort((a, b) => a.difficulty! - b.difficulty!);
+
     // If the mistakes are 0 and trpcData is available
     if (mistakes === 0 && trpcData?.words) {
       notifyToasterError("Better luck next time");
@@ -159,11 +171,11 @@ export default function Home() {
     //if the solved array is the lengh of 4 and data is empty
     if (solved?.length === 4 && data?.length === 0 && mistakes > 0) {
       setGameOver(true);
-      //setGamewon to true for 10 seconds so confetti doesnt go forever
+      //setGamewon to true for 40 seconds so confetti doesnt go forever
       setGameWon(true);
       setTimeout(() => {
         setGameWon(false);
-      }, 10000);
+      }, 40000);
 
       notifyToasterSuccess("You won");
     }
@@ -207,10 +219,11 @@ export default function Home() {
               // loop over words
               solved?.map((word, i) => (
                 <motion.div
+                  //Comenting out as it is animating the last group of words not the newly solved ones
                   //animate sliding up
-                  initial={{ y: 200 }}
-                  animate={{ y: 0 }}
-                  transition={{ duration: 1 }}
+                  // initial={{ y: 200 }}
+                  // animate={{ y: 0 }}
+                  // transition={{ duration: 1 }}
                   key={i}
                   //if the difficulty is 1 make it yellow 2 is orange 3 is red 4 is purple
                   className={`col-span-4 w-full rounded-lg
@@ -323,7 +336,8 @@ export default function Home() {
         <p className="mt-5 italic text-gray-500">by Enrico Simon</p>
 
         <p className="text-xs text-gray-500">
-          If you would like to contibute to this project, please visit
+          If you would like to contibute to the development of this project,
+          please visit
           <a
             className="text-blue-500"
             target="_blank"
